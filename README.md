@@ -2,7 +2,7 @@
 
 Дмитрий Карпов
 
-<a target="_blank" href="http://shri2015.if-else.ru/quetion_1/">Задание 1</a>h
+<a target="_blank" href="http://shri2015.if-else.ru/quetion_1/">Задание 1</a>
 <br>
 <br>
 <a target="_blank" href="http://shri2015.if-else.ru/quetion_2/">Задание 2</a>
