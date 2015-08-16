@@ -1,0 +1,243 @@
+body{
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #282828;
+	min-width: 1260px;
+}
+
+header {
+	padding: 20px 10%;
+	border-bottom: 1px solid #aaa;
+}
+
+h1 a{
+	font-size: 20px;
+	line-height: 17px;
+	color: #282828;
+	text-decoration: none;
+}
+
+.page_content {
+	margin: 0 auto;
+    width: 1260px;
+	position: relative;
+}
+
+.tablo_filter {
+	padding: 10px;
+}
+.tablo_filter_title {
+	font-weight: bold;
+}
+
+.tablo_wrapper {
+	position: relative;
+}
+
+.tablo_head_fix {
+	/*position: sticky;*/
+	position: absolute;
+	top: 0;
+	height: 40px;
+	background: #fff;
+	z-index: 1;
+	left: 0;
+	overflow-x: auto;
+	width: 1260px;
+}
+.tablo_head_fix.fixed {
+	position: fixed;
+}
+
+.tablo_head_row > th{
+	vertical-align: middle;
+	text-align: center;
+	padding: 5px 10px;
+	height: 40px;
+	font-weight: bold;
+	border-bottom: 2px solid #aaa;
+}
+.tablo_head_row > th.hover {
+	background: #eee;
+	border-bottom: 2px solid #777;
+	color: #777;
+	transition: 
+}
+.tablo_head_fix_offset {
+	height: 52px;
+}
+
+.flight_list {
+	border-spacing: 0;
+	border-collapse: collapse;
+	width: 1260px;
+}
+.flight_row {	
+	position: relative;
+}
+.flight_row:nth-child(odd){
+	background-color: rgba(230, 230, 230, 0.5);
+}
+.flight_row.hover{
+	background-color: rgba(200, 200, 200, 0.5);
+}
+.flight_list col.hover{
+	background-color: rgba(215, 215, 215, 0.5) !important;
+}
+.flight_row > td {
+	cursor: pointer;
+	padding: 10px;
+	text-align: center;
+	vertical-align: middle;
+}
+.type_head, .type_body {
+	width: 50px;
+}
+.destination_head, .destination_body {
+	width: 200px;
+}
+.flight_head, .flight_body {
+	width: 100px;
+}
+.company_head, .company_body {
+	width: 150px;
+}
+.company_logo_head, .company_logo_body {
+	width: 80px;
+}
+.aircraft_head, .aircraft_body {
+	width: 100px;
+}
+.time_head, .time_body {
+	width: 100px;
+}
+.time_head {
+	font-size: 13px;
+}
+.status_head, .status_body {
+	width: 200px;
+}
+.descr_head, .descr_body {
+    width: 100px;
+}
+.descr_body {
+	font-size: 12px;
+    font-style: italic;
+    line-height: 1;
+}
+.type_flight_ico {
+	padding: 4px 8px;
+	line-height: 0;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+}
+.flight_row.hover .type_flight_ico{
+	background: #eee;
+}
+.company_logo_body {
+	max-width: 80px;
+	overflow: hidden;
+}
+.company_logo_body img {
+	max-width: 80px;
+}
+.flight_info_wrapper {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 20;
+}
+.flight_info {	
+	background: #fff;	
+	border-radius: 5px;
+	box-shadow: 0 0 5px 1px #777;
+	padding: 10px;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+}
+.flight_info_title {
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.flight_row:active .flight_info_wrapper {
+	display: block;
+}
+.flight_info_wrapper:hover {
+	display: block;
+}
+.flight_info_table tr td {
+	padding: 5px 7px;
+	vertical-align: middle;
+	text-align: right;
+	border-bottom: 1px solid #eee;
+	width: 50%;
+	line-height: 1;
+}
+
+.flight_info_table tr td:last-child {	
+	text-align: left;
+}
+
+@media only screen and (max-width: 1280px) {
+	body {
+		min-width: 1080px;
+	}
+	.page_content, .flight_list, .tablo_head_fix {
+		width: 1080px;
+	}
+
+	.company_logo_col, .company_logo_head, .company_logo_body {
+		display: none;
+	}
+	.aircraft_col, .aircraft_head, .aircraft_body {
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 1110px) {
+	body {
+		min-width: 830px;
+	}
+	.page_content, .flight_list, .tablo_head_fix {
+		width: 830px;
+	}
+
+	.descr_col, .descr_head, .descr_body {
+		display: none;
+	}
+	.company_col, .company_head, .company_body {
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 850px) {
+	body {
+		min-width: 540px;
+	}
+	.page_content, .flight_list, .tablo_head_fix {
+		width: 540px;
+	}
+	.tablo_head_row > th {
+		padding: 5px;
+	}
+	.flight_row > td {
+		padding: 10px 5px;
+	}
+	.destination_head, .destination_body {
+		width: 100px;
+	}
+	.flight_head, .flight_body {
+		width: 70px;
+	}
+	.status_head, .status_body {
+		width: 100px;
+	}
+	.time_head, .time_body {
+		width: 70px;
+	}
+}

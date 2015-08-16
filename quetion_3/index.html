@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<title>Когда открываешь браузер, чтобы послушать музыку с компа</title>
+	</head>
+	<body>
+		<script>	
+			var audioContext = null
+				file = null, 
+				fileName = null,
+				source = null,
+				fileResult = null,
+				animationId = null,
+				canvas = null,
+				cwidth = 0,
+				cheight = 0,
+				meterWidth = 10, //width of the meters in the spectrum
+				gap = 2, //gap between meters
+				capHeight = 2,
+				capStyle = '#fff',
+				meterNum = 800 / (10 + 2), //count of the meters
+				capYPositionArray = [];
+				
+			window.onload = function() {			
+				var dropZone = document.getElementById('open_file'),
+					inputFile = document.getElementById('input_file'),
+					showFilename = document.getElementById('show_filename')
+					btnPlay = document.getElementById('button_play'),
+					btnStop = document.getElementById('button_stop'),
+					canvas = document.getElementById('canvas'),
+					width = canvas.width,
+					cheight = canvas.height - 2;
+				
+				window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
+				window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+				window.cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+				try {
+					audioContext = new AudioContext();
+				} catch (e) {
+					console.log(e);
+				}
+					
+					
+					
+				inputFile.onchange = function() {
+					if (this.files.length !== 0) {
+						file = this.files[0];
+						fileName = file.name;
+						showFilename.innerHTML = 'Файл: ' + fileName;
+						
+						//that._start();
+						loadFile();
+					};
+				};
+				
+                dropZone.addEventListener("dragover", function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+                }, false);
+                dropZone.addEventListener("dragleave", function() {
+
+                }, false);
+                dropZone.addEventListener("drop", function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    file = e.dataTransfer.files[0];
+                    fileName = file.name;
+					showFilename.innerHTML = 'Файл: ' + fileName;
+
+                    //that._start();
+					loadFile();
+                }, false);
+				
+				btnPlay.addEventListener("click", function () {play();});
+				btnStop.addEventListener("click", function () {stop();});				
+			};
+			
+			function loadFile() {
+				var fr = new FileReader();
+				fr.onload = function(e) {
+					
+					fileResult = e.target.result;
+					if (audioContext === null) {
+						return;
+					};
+					btnPlay.removeAttribute('disabled');
+					btnStop.removeAttribute('disabled');
+					
+					//var dv = new jDataView(fileResult);
+					console.log(e.target);
+				};
+				fr.onerror = function(e) {
+					console.log(e);
+				};
+				
+				if(file) {
+					fr.readAsArrayBuffer(file);
+				}
+			}
+			
+			function play() {					
+				audioContext.decodeAudioData(fileResult, function(buffer) {
+					var audioBufferSouceNode = audioContext.createBufferSource(),
+						analyser = audioContext.createAnalyser();
+						
+					audioBufferSouceNode.connect(analyser);
+					audioBufferSouceNode.buffer = buffer;
+					analyser.connect(audioContext.destination);
+					
+					if (!audioBufferSouceNode.start) {
+						audioBufferSouceNode.start = audioBufferSouceNode.noteOn 
+						audioBufferSouceNode.stop = audioBufferSouceNode.noteOff
+					};
+					if (animationId !== null) {
+						cancelAnimationFrame(animationId);
+					}
+					if (source !== null) {
+						source.stop(0);
+					}
+					audioBufferSouceNode.start(0);	
+					source = audioBufferSouceNode;						
+					
+					ctx = canvas.getContext('2d'),
+					gradient = ctx.createLinearGradient(0, 0, 0, 300);
+					gradient.addColorStop(1, '#0f0');
+					gradient.addColorStop(0.5, '#ff0');
+					gradient.addColorStop(0, '#f00');
+					var drawMeter = function() {
+						var array = new Uint8Array(analyser.frequencyBinCount);
+						analyser.getByteFrequencyData(array);
+						if (status === 0) {
+							//fix when some sounds end the value still not back to zero
+							for (var i = array.length - 1; i >= 0; i--) {
+								array[i] = 0;
+							};
+							allCapsReachBottom = true;
+							for (var i = capYPositionArray.length - 1; i >= 0; i--) {
+								allCapsReachBottom = allCapsReachBottom && (capYPositionArray[i] === 0);
+							};
+							if (allCapsReachBottom) {
+								cancelAnimationFrame(animationId); 
+								return;
+							};
+						};
+						var step = Math.round(array.length / meterNum);
+						ctx.clearRect(0, 0, cwidth, cheight);
+						for (var i = 0; i < meterNum; i++) {
+							var value = array[i * step];
+							if (capYPositionArray.length < Math.round(meterNum)) {
+								capYPositionArray.push(value);
+							};
+							ctx.fillStyle = capStyle;
+							//draw the cap, with transition effect
+							if (value < capYPositionArray[i]) {
+								ctx.fillRect(i * 12, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+							} else {
+								ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+								capYPositionArray[i] = value;
+							};
+							ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
+							ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
+						}
+						animationId = requestAnimationFrame(drawMeter);
+					}
+					animationId = requestAnimationFrame(drawMeter);
+				}, function(e) {
+					console.log(e);
+				});				
+			}
+		
+			function stop() {
+				source.stop(0);
+			}
+		</script>
+
+		<div id="open_file" class="open_file">
+			<div class="open_file_placeholder">Открыть файл</div>
+			<input id="input_file" class="input_file" type="file" name="file" value="" />
+		</div>
+		<div id="show_filename" class="show_filename"></div>
+		<div class="buttons">
+			<button id="button_play" disabled class="button_play">Play</button>
+			<button id="button_stop" disabled class="button_stop">Stop</button>
+		<div>
+		<canvas id="canvas" class="canvas"></canvas>
+
+		
+		<style>
+			.open_file {
+				width: 100%;
+				height: 50px;
+				border: 2px dotted #ddd;
+				
+				overflow: hidden;
+				position: relative;
+			}
+			.open_file:hover {
+				border: 2px dotted #aaa;
+			}		
+			.input_file {
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+			}			
+			.open_file_placeholder {
+				line-height: 50px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				text-align: center;
+				height: 400px;
+				width: 100%;
+			}			
+			.show_filename {
+				margin-top: 10px;
+			}			
+			.buttons {
+				margin-top: 10px;
+			}
+			.canvas {
+				margin-top: 20px;
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</body>
+</html>
